@@ -1,95 +1,74 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
 
-export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+import { Button, Divider, NativeSelect } from '@mui/material';
+import Navigation from './Navigation/Navigation';
+import { useEffect, useState } from 'react';
+import Product from './Product/Product';
+import styles from './page.module.css';
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+export type ProductType = {
+  id: number;
+  images: string[];
+  price: number;
+  title: string;
+  description: string;
 }
+
+const Home = () => {
+  const [products, setProducts] = useState<ProductType[]>([]);
+  const [property, setProperty] = useState('');
+  const [visibleProducts, setVisibleProducts] = useState<number>(8);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('https://api.escuelajs.co/api/v1/products');
+      const data = await response.json();
+      setProducts(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // componentDidMount - daca avem [] gol ca parametru
+  // componentDidUpdate - daca avem [products] ca parametru
+  useEffect(() => {
+    fetchProducts();
+    // dependencies
+  }, []);
+
+  const handleChange = (event) => {
+    setProperty(event.target.value);
+  }
+
+  const handleClick = () => {
+    setVisibleProducts(visibleProducts + 8);
+  }
+  return (
+    <>
+      <Navigation showIcon={true} />
+      <Divider />
+      <div className={styles.filter}>
+      {products.length > 0 ? <p>Showing 1-10 of {products.length} Products </p> : null}
+      Sort by 
+          <NativeSelect
+            defaultValue={property}
+            inputProps={{
+              name: 'property',
+              id: 'uncontrolled-native',
+            }}
+          >
+            <option value='title'>Title</option>
+            <option value='price'>Price</option>
+          </NativeSelect>
+      </div>
+      <div className={styles.productsContainer}>
+        {products.slice(0, visibleProducts).map(product => {
+          return (<Product key={product.id} product={product} size="small" />)}
+        )}
+      </div>
+      <Button className={styles.showMore} size="large" variant="contained" onClick={handleClick}>Show more</Button>
+    </>
+  );
+};
+
+export default Home;

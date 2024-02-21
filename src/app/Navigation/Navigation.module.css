@@ -1,0 +1,18 @@
+.navContainer {
+  display: flex;
+  padding: 20px 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.gapSmall {
+  gap: 24px;
+  display: flex;
+}
+
+.search {
+  width: 40%;
+  background-color: #f0f0f0;
+  border-radius: 40px;
+}
