@@ -1,10 +1,10 @@
 'use client';
-
 import { Button, Divider, NativeSelect } from '@mui/material';
 import Navigation from './Navigation/Navigation';
 import { useEffect, useState } from 'react';
-import Product from './Product/Product';
+import Product from './product/Product';
 import styles from './page.module.css';
+import Link from 'next/link';
 
 export type ProductType = {
   id: number;
@@ -36,13 +36,10 @@ const Home = () => {
     // dependencies
   }, []);
 
-  const handleChange = (event) => {
-    setProperty(event.target.value);
-  }
-
   const handleClick = () => {
     setVisibleProducts(visibleProducts + 8);
   }
+
   return (
     <>
       <Navigation showIcon={true} />
@@ -62,9 +59,11 @@ const Home = () => {
           </NativeSelect>
       </div>
       <div className={styles.productsContainer}>
-        {products.slice(0, visibleProducts).map(product => {
-          return (<Product key={product.id} product={product} size="small" />)}
-        )}
+        {products.slice(0, visibleProducts).map(product => (
+          <Link href="/product/[productId]"  key={product.id} as={`/Product/${product.id}`}>
+              <Product product={product} size="small" />
+          </Link>
+        ))}
       </div>
       <Button className={styles.showMore} size="large" variant="contained" onClick={handleClick}>Show more</Button>
     </>

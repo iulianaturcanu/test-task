@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ProductType } from "../page";
 import styles from './Product.module.css';
 
@@ -9,10 +10,9 @@ type ProductTypeProps = {
 const Product = (props: ProductTypeProps) => {
 
     const { product } = props;
-
     return (
       <div>
-          {product.images[0] ? <img className={styles.image} src={product.images[0]} alt="t-shirt image" width="280px"/> : null}
+          {product.images[0] ? <Image className={styles.image} src={'/download.png'} alt="t-shirt image" width="280" height="200" /> : null}
           <h5 className={styles.title}>{product?.title}</h5>
           <h4>$ {product?.price}</h4>
       </div>
